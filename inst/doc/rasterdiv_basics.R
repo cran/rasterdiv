@@ -3,7 +3,6 @@ knitr::opts_chunk$set(fig.width=10, fig.height=10,fig.asp = 0.618, out.width = "
 #knitr::opts_chunk$set(dev = 'pdf')
 
 ## ----results='hide', message=FALSE, warning=FALSE-----------------------------
-#Required packages
 require(rasterdiv)
 require(rasterVis)
 require(RColorBrewer)
@@ -31,9 +30,6 @@ pie <- Pielou(copNDVIlr,window=9,na.tolerance=0.1,np=1)
 #Berger-Parker's Index
 ber <- BergerParker(copNDVIlr,window=9,na.tolerance=0.1,np=1)
 
-#Rao's quadratic Entropy
-rao <- Rao(copNDVIlr,window=9,na.tolerance=0.1,dist_m="euclidean",shannon=FALSE,np=1)
-
 #Parametric Rao's quadratic entropy with alpha ranging from 1 to 5
 prao <- paRao(copNDVIlr,window=9,alpha=1:5,na.tolerance=0.1,dist_m="euclidean",np=1)
 
@@ -43,7 +39,7 @@ cre <- CRE(copNDVIlr,window=9,na.tolerance=0.1,np=1)
 #Hill's numbers
 hil <- Hill(copNDVIlr,window=9,alpha=seq(0,2,0.5),na.tolerance=0.1,np=1)
 
-#Renyi's Index
+#Rényi's Index
 ren <- Renyi(copNDVIlr,window=9,alpha=seq(0,2,0.5),na.tolerance=0.1,np=1)
 
 ## ----fig02--------------------------------------------------------------------
@@ -59,22 +55,18 @@ levelplot(pie,main="Pielou's evenness from Copernicus NDVI 5 km (9 px-side movin
 levelplot(ber,main="Berger-Parker's index from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,1,1), ylim=c(-60,75), margin = list(draw = TRUE))
 
 ## ----fig05--------------------------------------------------------------------
-#Rao's quadratic Entropy
-levelplot(rao,main="Rao's quadratic entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,1,1), ylim=c(-60,75), margin = list(draw = TRUE))
+#Parametric Rao's quadratic Entropy
+levelplot(stack(prao[[1]]),main="Parametric Rao's quadratic entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,5,1), ylim=c(-60,75), margin = list(draw = TRUE))
 
 ## ----fig06--------------------------------------------------------------------
-#Parametric Rao's quadratic Entropy
-levelplot(stack(prao),main="Parametric Rao's quadratic entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,5,1), ylim=c(-60,75), margin = list(draw = TRUE))
-
-## ----fig07--------------------------------------------------------------------
 #Cumulative Residual Entropy
 levelplot(cre,main="Cumulative Residual Entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,1,1), ylim=c(-60,75), margin = list(draw = TRUE))
 
-## ----fig08--------------------------------------------------------------------
-#Hill's numbers (alpha=0, 1, 1.5 and 2)
-levelplot(stack(hil),main="Hill's numbers from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,5,1),names.attr=paste("alpha",seq(0,2,0.5),sep=" "), ylim=c(-60,75))
+## ----fig07--------------------------------------------------------------------
+#Hill's numbers (alpha=0, 0.5, 1, 1.5 and 2)
+levelplot(stack(hil),main="Hill's numbers from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,5,1), ylim=c(-60,75))
 
-## ----fig09--------------------------------------------------------------------
+## ----fig08--------------------------------------------------------------------
 #Renyi' Index (alpha=0, 1, 1.5 and 2)
 levelplot(stack(ren),main="Renyi's entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,5,1),names.attr=paste("alpha",seq(0,2,0.5),sep=" "), ylim=c(-60,75), margin = list(draw = FALSE))
 

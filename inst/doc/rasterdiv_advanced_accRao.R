@@ -4,10 +4,9 @@ knitr::opts_chunk$set(fig.width=10, fig.height=10,fig.asp = 0.618, out.width = "
 
 ## ----results='hide', message=FALSE, warning=FALSE-----------------------------
 #Required packages
-require(rasterdiv)
 require(rasterVis)
-require(ggplot2)
 require(gridExtra)
+require(rasterdiv)
 
 ## ----results='hide', message=FALSE, warning=FALSE-----------------------------
 copNDVI <- raster::reclassify(copNDVI, cbind(252,255, NA), right=TRUE)
@@ -32,10 +31,10 @@ accrao.before <- accRao(alphas=1:10, x=ndvi.before, dist_m="euclidean", window=3
 accrao.after <- accRao(alphas=1:10, x=ndvi.after, dist_m="euclidean", window=3, method="classic", rasterAUC=TRUE, na.tolerance=0.4, np=1)
 
 #The absolute difference between before and after can now be calculated
-accrao.diff <- abs(accrao.after - accrao.before)
+accrao.diff <- abs(accrao.after[[1]] - accrao.before[[1]])
 
 ## ----results='hide', message=FALSE, warning=FALSE-----------------------------
-l1 <- levelplot(stack(accrao.before,accrao.after),as.table = T, layout=c(0,2,1), margin=FALSE,col.regions=col.ndvi, names.attr=c("Before", "After"),main="AccRao index from copNDVI")
+l1 <- levelplot(stack(accrao.before[[1]],accrao.after[[1]]),as.table = T, layout=c(0,2,1), margin=FALSE,col.regions=col.ndvi, names.attr=c("Before", "After"),main="AccRao index from copNDVI")
 l2 <- levelplot(accrao.diff, layout=c(1,1), margin=FALSE, main="Difference")
 
 grid.arrange(l1,l2, layout_matrix = rbind(c(1,2)))
@@ -64,21 +63,21 @@ accrao.t1 <- integrate(accrao.t1f, lower=1,upper=10, subdivisions = 500)
 print(accrao.t1)
 
 ## ----results='hide', message=FALSE, warning=FALSE, out.width = "100%", fig.asp = 0.7, fig.width = 9----
-accrao.df <- cbind.data.frame(alphas,rao.t0,rao.t1,alphas1=rep(0,10))
-g1 <- ggplot(accrao.df,aes(x=alphas,y=rao.t0)) + 
-ylab("AccRao's Index") +
-geom_line(col="red",lwd=3) +
-geom_area(data=accrao.df,aes(x=alphas,y=rao.t0),fill="red",alpha=0.3,inherit.aes=FALSE) +
-geom_area(data=accrao.df,aes(x=alphas,y=rao.t1),fill="blue",alpha=0.3,inherit.aes=FALSE) +
-geom_line(data=accrao.df,aes(x=alphas,y=rao.t1),col="blue",lwd=3,inherit.aes=FALSE) +
-geom_text(data=cbind.data.frame(x=3.5,y=60),aes(x=x,y=y),label=expression(integral((frac(1, N^4) %.% D^alpha)^(frac(1,alpha)) * dx == 456, alpha==0, 10)),col="red",cex=5,inherit.aes=FALSE) +
-geom_text(data=cbind.data.frame(x=7,y=25),aes(x=x,y=y),label=expression(integral((frac(1, N^4) %.% D^alpha)^(frac(1,alpha)) * dx == 343, alpha==0, 10)),col="blue",cex=5,inherit.aes=FALSE) +
-geom_text(data=cbind.data.frame(x=8,y=67),aes(x=x,y=y),label="Difference = 113",col="black",cex=4,angle=20,inherit.aes=FALSE) +
-ggtitle("AccRao index before, after and difference") +
-theme_bw()
+# accrao.df <- cbind.data.frame(alphas,rao.t0,rao.t1,alphas1=rep(0,10))
+# g1 <- ggplot(accrao.df,aes(x=alphas,y=rao.t0)) + 
+# ylab("AccRao's Index") +
+# geom_line(col="red",lwd=3) +
+# geom_area(data=accrao.df,aes(x=alphas,y=rao.t0),fill="red",alpha=0.3,inherit.aes=FALSE) +
+# geom_area(data=accrao.df,aes(x=alphas,y=rao.t1),fill="blue",alpha=0.3,inherit.aes=FALSE) +
+# geom_line(data=accrao.df,aes(x=alphas,y=rao.t1),col="blue",lwd=3,inherit.aes=FALSE) +
+# geom_text(data=cbind.data.frame(x=3.5,y=60),aes(x=x,y=y),label=expression(integral((frac(1, N^4) %.% D^alpha)^(frac(1,alpha)) * dx == 456, alpha==0, 10)),col="red",cex=5,inherit.aes=FALSE) +
+# geom_text(data=cbind.data.frame(x=7,y=25),aes(x=x,y=y),label=expression(integral((frac(1, N^4) %.% D^alpha)^(frac(1,alpha)) * dx == 343, alpha==0, 10)),col="blue",cex=5,inherit.aes=FALSE) +
+# geom_text(data=cbind.data.frame(x=8,y=67),aes(x=x,y=y),label="Difference = 113",col="black",cex=4,angle=20,inherit.aes=FALSE) +
+# ggtitle("AccRao index before, after and difference") +
+# theme_bw()
 
-#Everything in one plot, the red and white squares overlayed on the rasters represent the moving window selected for the exercise. 
-l1 <- l1+levelplot(ndvi.t0,col.regions="red")
-l2 <- l2+levelplot(ndvi.t0,col.regions="white")
-grid.arrange(l1,l2,g1, layout_matrix = rbind(c(1,2),c(3,3)))
+# #Everything in one plot, the red and white squares overlayed on the rasters represent the moving window selected for the exercise. 
+# l1 <- l1+levelplot(ndvi.t0,col.regions="red")
+# l2 <- l2+levelplot(ndvi.t0,col.regions="white")
+# grid.arrange(l1,l2,g1, layout_matrix = rbind(c(1,2),c(3,3)))
 
