@@ -1,3 +1,19 @@
+# rasterdiv 0.2.5
+## Major changes
+* Starting to implement area-based paRao.
+
+## Minor changes
+* Vignettes reduced
+* Added world vector dataset
+
+# rasterdiv 0.2.4
+## Major changes
+* accRao now *RaoAUC*
+* RaoAUC working with *paRao* in multidimensional mode.
+
+## Minor changes
+* Fixed some inconsistencies in the manual.
+
 # rasterdiv 0.2.2p1
 ## Major changes
 * Fixed issue due to high alphas which caused parametric Rao's to go to infinite (just added a warning for the multidimensional version).

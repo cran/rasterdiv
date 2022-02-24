@@ -1,11 +1,11 @@
-\name{accRao}
-\alias{accRao}
+\name{RaoAUC}
+\alias{RaoAUC}
 \title{Accumulation function for parametric Rao's index of quadratic entropy (Q)}
 \description{
-AccRao computes the accumulation function (integral or area under the curve) of the parametric version of Rao's index of quadratic entropy (Q) on different classes of numeric matrices using a moving window algorithm.
+RaoAUC computes the accumulation function (integral or area under the curve) of the parametric version of Rao's index of quadratic entropy (Q) on different classes of numeric matrices using a moving window algorithm.
 }
 \usage{
-accRao(alphas=1:5, x, dist_m="euclidean", window=9,
+RaoAUC(alphas=1:5, x, dist_m="euclidean", window=9,
   method="classic", rasterAUC=TRUE, lambda=0,
   na.tolerance=1.0, rescale=FALSE, diag=TRUE, 
   simplify=2, np=1, cluster.type="SOCK", debugging=FALSE)
@@ -27,7 +27,7 @@ accRao(alphas=1:5, x, dist_m="euclidean", window=9,
   \item{debugging}{a boolean variable set to FALSE by default. If TRUE, additional messages will be printed. For debugging only.}
   }
   \details{
-  The accumulation function for the parametric Rao's Index (\eqn{Q}) is calculated integrating numerically over a range of alphas. *accRao* is therefore equal to \eqn{(\int_{a}^{b} {1\over{N^4}}\cdot{d_{i,j}^{\alpha}})^{1\over{\alpha}} dx}. Where \emph{N} is the number of pixels  in a moving window, and \emph{alpha} is a weight assigned to distances.}
+  The accumulation function for the parametric Rao's Index (\eqn{Q}) is calculated integrating numerically over a range of alphas. *RaoAUC* is therefore equal to \eqn{(\int_{a}^{b} {1\over{N^4}}\cdot{d_{i,j}^{\alpha}})^{1\over{\alpha}} dx}. Where \emph{N} is the number of pixels  in a moving window, and \emph{alpha} is a weight assigned to distances.}
   \value{
   A matrix of dimension \code{dim(x)}. If \code{rasterAUC=TRUE}, then the output is a RasterLayer with \emph{x} as template.}
   \references{
@@ -40,7 +40,7 @@ accRao(alphas=1:5, x, dist_m="euclidean", window=9,
   \code{\link{paRao}}
   }
   \examples{
-  #Minimal example; accRao with alphas ranging from 1 to 10
-  a <- matrix(c(10,10,10,20,20,20,20,30,30),ncol=3,nrow=3)
-  out <- accRao(alphas=1:10,x=a,window=3,dist_m="euclidean",na.tolerance=1, rasterAUC=TRUE)
+  #Minimal example; RaoAUC with alphas ranging from 1 to 10
+  a <- matrix(c(10,10,10,20,20,20,20,30,30), ncol=3, nrow=3)
+  out <- RaoAUC(alphas=1:10, x=a, window=3, dist_m="euclidean", na.tolerance=1, rasterAUC=TRUE)
   }

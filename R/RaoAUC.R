@@ -1,6 +1,6 @@
-accRao <- function(alphas=1:5, x, dist_m="euclidean", window=9, method="classic", rasterAUC=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=2, np=1, cluster.type="SOCK", debugging=FALSE)
+RaoAUC <- function(alphas=1:5, x, dist_m="euclidean", window=9, method="classic", rasterAUC=TRUE, lambda=0, na.tolerance=1.0, rescale=FALSE, diag=TRUE, simplify=2, np=1, cluster.type="SOCK", debugging=FALSE)
 {
-	out <- paRao(x, dist_m, window, method, rasterOut=FALSE, alpha=alphas, lambda, na.tolerance, rescale, diag, simplify, np, cluster.type, debugging)
+	out <- paRao(x, area=NULL, field=NULL, dist_m, window, method, rasterOut=FALSE, alpha=alphas, lambda, na.tolerance, rescale, diag, simplify, np, cluster.type, debugging)
 
 	message("\nIntegrating numerically Rao values over alphas...\n")
 
