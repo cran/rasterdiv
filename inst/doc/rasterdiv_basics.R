@@ -15,6 +15,8 @@ copNDVI <- raster::reclassify(copNDVI, cbind(252,255, NA), right=TRUE)
 copNDVIlr <- raster::aggregate(copNDVI, fact=20)
 #Set float numbers as integers to further speed up the calculation
 storage.mode(copNDVIlr[]) = "integer"
+
+## ---- echo=FALSE, results='hide',message=FALSE--------------------------------
 #Cut on Africa and Australia
 cont <- subset(world, CONTINENT=="Africa"|CONTINENT=="Oceania")
 copNDVIcont <- crop(copNDVIlr, cont)
@@ -24,12 +26,12 @@ levelplot(copNDVI,layout=c(0,1,1), main="NDVI 21st of June 1999-2017 - ~8km pixe
 levelplot(copNDVIlr,layout=c(0,1,1), main="NDVI 21st of June 1999-2017 - ~150km pixel resolution")
 
 ## ----echo = T, results = 'hide', warning=FALSE, message=FALSE-----------------
-RaoC <- paRao(x=copNDVIlr, area=cont, field='CONTINENT', alpha=c(1,2))
+RaoC <- paRao(x=copNDVIlr, area=world, field='CONTINENT', alpha=c(1,2))
 
 ## ----fig02--------------------------------------------------------------------
-#Shannon's Diversity
-plot(RaoC, col=RaoC$alpha.1, main="Rao's index per continent alpha 1")
-text(RaoC, label=paste("Rao =", round(RaoC$alpha.1,1)), col="black")
+#Plot area-based RAo's index
+plot(RaoC, col=hcl(RaoC$alpha.1*10), main="Rao's index per continent alpha 1")
+text(RaoC, label=paste("Rao'Q =", round(RaoC$alpha.1,1)), col="black", family="Arial")
 
 ## ----echo = T, results = 'hide', warning=FALSE, message=FALSE-----------------
 #Shannon's Diversity

@@ -2,6 +2,8 @@ paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=
 {
     # Define function to check if a number is an integer
 	is.wholenumber <- function(x, tol = .Machine$double.eps^0.5) abs(x - round(x)) < tol
+    # Warning on numeric "simplification"
+    message(paste0("Warning: simplify=", simplify,". You're rounding data to ",simplify," decimal place."))
     # Initial checks on type of input data
 	if( !(is(x,"matrix") | is(x,"SpatialGridDataFrame") | is(x,"RasterLayer") | is(x,"list")) ) {
 		stop("\nNot a valid x object.")
@@ -64,7 +66,7 @@ paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=
 						y <- z * mfactor
 						storage.mode(y) <- "integer"
 					} else{
-						y <- type.convert(matrix(getValues(z),ncol=nc,nrow=nr,byrow=TRUE))
+						y <- type.convert(matrix(getValues(z),ncol=nc,nrow=nr,byrow=TRUE), as.is= TRUE)
 					}
 					return(y)
 				})
@@ -99,7 +101,7 @@ paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=
 						y <- z * mfactor
 						storage.mode(y) <- "integer"
 					}
-					type.convert(as.matrix(z))
+					type.convert(as.matrix(z), as.is=TRUE)
 				})
 			}
 		}
@@ -118,7 +120,7 @@ paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=
 				if( debugging ){cat("#check: Inside area clause.")}
 				split_layers <- split(area, area[[field]])
 				out <- lapply(X=split_layers, function(are){
-					lapply(X=alpha, area=are, FUN=paRaoAreaS, rasterm=rasterm[[1]])
+					lapply(X=alpha, area=are, FUN=paRaoAreaS, rasterm=rasterm[[1]], simplify=simplify)
 				})
 			} else {
 				out <- lapply(X=w, function(win){
@@ -160,7 +162,7 @@ paRao <- function(x, area=NULL, field=NULL, dist_m="euclidean", window=9, alpha=
 		if( !is.null(area) )
 		{
 			y <- do.call(rbind.data.frame, lapply(out, function(x) rbind(x)))
-			y <- as.data.frame(sapply(y,unlist))
+			if(nrow(y)>1) y <- as.data.frame(sapply(y,unlist))
 			names(y) <- paste("alpha.",alpha, sep="")
 			area@data <- cbind.data.frame(area@data,y)
 			return(area)
