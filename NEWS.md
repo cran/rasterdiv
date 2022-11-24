@@ -1,3 +1,15 @@
+# rasterdiv 0.3.1
+## Minor changes
+* Fixing repetition in paRao() manual
+
+# rasterdiv 0.3.0
+## Major changes
+* Adding multidimension area-based Rao's index in *paRao()*.
+
+## Minor changes
+* Reorganisation of vignettes.
+* New GitHub site with *pkgdown()*.
+
 # rasterdiv 0.2.5.2
 ## Minor changes
 * Adding testthat tests for area-based Rao.

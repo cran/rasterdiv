@@ -32,7 +32,7 @@ values(r)=xyz$sim1
 values(r1)=xyz$sim2
 
 ## ----results='hide', message=FALSE, warning=FALSE-----------------------------
-mRao <- paRao(x=list(r,r1), window=c(3,5), alpha=c(1,Inf), na.tolerance=1, method="multidimension",simplify=3)
+mRao <- paRao(x=list(r,r1), window=c(3,5), alpha=c(1,Inf), na.tolerance=1, method="multidimension",simplify=3, debugging=TRUE)
 
 ## -----------------------------------------------------------------------------
 plot(stack(r,r1,stack(mRao[[1]]),stack(mRao[[2]])), nc = 2, nr = 3)

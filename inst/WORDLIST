@@ -6,13 +6,16 @@ NA's
 NDVI
 Pielou
 Pielou's
+Pielou’s
 RaoAUC
 RasterLayer
 RasterLayers
-Rdoc
+RasterStack
 Renyi
 Renyi's
 Rényi
+Rényi's
+Rényi’s
 SpatialPolygonsDataFrame
 Unidimension
 Vemuri
@@ -39,6 +42,7 @@ np
 paRao
 pbapply
 pbmcapply
+pkgdown
 px
 rasterstack
 rmpi

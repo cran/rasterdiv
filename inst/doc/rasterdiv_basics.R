@@ -12,48 +12,34 @@ copNDVI <- raster::reclassify(copNDVI, cbind(252,255, NA), right=TRUE)
 
 ## -----------------------------------------------------------------------------
 #Resample using raster::aggregate and a linear factor of 20
-copNDVIlr <- raster::aggregate(copNDVI, fact=20)
+copNDVIlr <- raster::aggregate(copNDVI, fact=30)
 #Set float numbers as integers to further speed up the calculation
 storage.mode(copNDVIlr[]) = "integer"
 
-## ---- echo=FALSE, results='hide',message=FALSE--------------------------------
-#Cut on Africa and Australia
-cont <- subset(world, CONTINENT=="Africa"|CONTINENT=="Oceania")
-copNDVIcont <- crop(copNDVIlr, cont)
-
 ## ----fig01--------------------------------------------------------------------
-levelplot(copNDVI,layout=c(0,1,1), main="NDVI 21st of June 1999-2017 - ~8km pixel resolution")
 levelplot(copNDVIlr,layout=c(0,1,1), main="NDVI 21st of June 1999-2017 - ~150km pixel resolution")
 
 ## ----echo = T, results = 'hide', warning=FALSE, message=FALSE-----------------
-RaoC <- paRao(x=copNDVIlr, area=world, field='CONTINENT', alpha=c(1,2))
-
-## ----fig02--------------------------------------------------------------------
-#Plot area-based RAo's index
-plot(RaoC, col=hcl(RaoC$alpha.1*10), main="Rao's index per continent alpha 1")
-text(RaoC, label=paste("Rao'Q =", round(RaoC$alpha.1,1)), col="black", family="Arial")
-
-## ----echo = T, results = 'hide', warning=FALSE, message=FALSE-----------------
 #Shannon's Diversity
-sha <- Shannon(copNDVIcont,window=9,na.tolerance=0.1,np=1)
+sha <- Shannon(copNDVIlr,window=9,na.tolerance=0.2,np=1)
 
 #Pielou's Evenness
-pie <- Pielou(copNDVIcont,window=9,na.tolerance=0.1,np=1)
+pie <- Pielou(copNDVIlr,window=9,na.tolerance=0.2,np=1)
 
 #Berger-Parker's Index
-ber <- BergerParker(copNDVIcont,window=9,na.tolerance=0.1,np=1)
+ber <- BergerParker(copNDVIlr,window=9,na.tolerance=0.2,np=1)
 
 #Parametric Rao's quadratic entropy with alpha ranging from 1 to 5
-prao <- paRao(copNDVIcont,window=9,alpha=1:5,na.tolerance=0.1,dist_m="euclidean",np=1)
+prao <- paRao(copNDVIlr, window=9, alpha=1:3, na.tolerance=0.2, dist_m="euclidean",np=1)
 
 #Cumulative Residual Entropy
-cre <- CRE(copNDVIcont,window=9,na.tolerance=0.1,np=1)
+cre <- CRE(copNDVIlr,window=9,na.tolerance=0.2, np=1)
 
 #Hill's numbers
-hil <- Hill(copNDVIcont,window=9,alpha=seq(0,2,0.5),na.tolerance=0.1,np=1)
+hil <- Hill(copNDVIlr,window=9,alpha=seq(0,1,0.5),na.tolerance=0.2,np=1)
 
 #Rényi's Index
-ren <- Renyi(copNDVIcont,window=9,alpha=seq(0,2,0.5),na.tolerance=0.1,np=1)
+ren <- Renyi(copNDVIlr,window=9,alpha=seq(0,1,0.5),na.tolerance=0.2,np=1)
 
 ## ----fig03--------------------------------------------------------------------
 #Shannon's Diversity
@@ -69,17 +55,17 @@ levelplot(ber,main="Berger-Parker's index from Copernicus NDVI 5 km (9 px-side m
 
 ## ----fig06--------------------------------------------------------------------
 #Parametric Rao's quadratic Entropy
-levelplot(stack(prao[[1]]),main="Parametric Rao's quadratic entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,5,1), ylim=c(-60,75), margin = list(draw = TRUE))
+levelplot(stack(prao[[1]]),main="Parametric Rao's quadratic entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,3,1), ylim=c(-60,75), margin = list(draw = TRUE))
 
 ## ----fig07--------------------------------------------------------------------
 #Cumulative Residual Entropy
 levelplot(cre,main="Cumulative Residual Entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,1,1), ylim=c(-60,75), margin = list(draw = TRUE))
 
 ## ----fig08--------------------------------------------------------------------
-#Hill's numbers (alpha=0, 0.5, 1, 1.5 and 2)
-levelplot(stack(hil),main="Hill's numbers from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,5,1), ylim=c(-60,75))
+#Hill's numbers (alpha=0, 0.5 and 1)
+levelplot(stack(hil),main="Hill's numbers from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,3,1), ylim=c(-60,75))
 
 ## ----fig09--------------------------------------------------------------------
-#Renyi' Index (alpha=0, 1, 1.5 and 2)
-levelplot(stack(ren),main="Renyi's entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,5,1),names.attr=paste("alpha",seq(0,2,0.5),sep=" "), ylim=c(-60,75), margin = list(draw = FALSE))
+#Renyi' Index (alpha=0, 0.5 and 1)
+levelplot(stack(ren),main="Renyi's entropy from Copernicus NDVI 5 km (9 px-side moving window)",as.table = T,layout=c(0,3,1),names.attr=paste("alpha",seq(0,1,0.5),sep=" "), ylim=c(-60,75), margin = list(draw = FALSE))
 
