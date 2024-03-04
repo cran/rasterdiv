@@ -1,73 +1,67 @@
-Shannon <- function(x, window=3, rasterOut=TRUE, np=1, na.tolerance=1, cluster.type="SOCK", debugging=FALSE){
+#' Shannon's Evenness Index
+#'
+#' @description Calculates Shannon's Evenness Index for a given raster object over a specified window size. The function can operate in either sequential or parallel mode.
+#'
+#' @param x A raster object (matrix, SpatRaster, SpatialGridDataFrame, or a list containing one of these).
+#' @param window The size of the moving window to be used for the calculation. Must be an odd integer.
+#' @param rasterOut Logical, if TRUE the output will be a raster object; if FALSE a matrix.
+#' @param np The number of processes to use in parallel mode. If np > 1, parallel computation is enabled.
+#' @param na.tolerance The tolerance level for NA values within the moving window, expressed as a proportion (0 to 1).
+#' @param cluster.type The type of cluster to use for parallel computation (e.g., "SOCK", "FORK").
+#' @param debugging Logical, if TRUE debugging information will be printed.
+#'
+#' @return Returns a raster object or matrix containing the Shannon's Evenness Index values.
+#' @export
 
-# Initial checks
-  if( !((is(x,"matrix") | is(x,"SpatialGridDataFrame") | is(x,"RasterLayer") | is(x,"list"))) ) {
-    stop("\nNot a valid x object. Exiting...")
-  }
-  else if( is(x,"matrix") ) {
-    rasterm <- x
-  }
-  else if( is(x,"SpatialGridDataFrame") ) {
-    rasterm <- raster(x)
-  }
-  else if( is(x,"RasterLayer")) {
-    rasterm <- matrix(getValues(x), ncol = ncol(x), nrow = nrow(x), byrow=TRUE)
-  } 
-  else if( is(x,"list") ) {
-    message("x is a list, only first element will be taken.")
-    if( !((is(x[[1]],"matrix") | is(x[[1]],"SpatialGridDataFrame") | is(x[[1]],"RasterLayer"))) ) {
-      stop("The first element of list x is not a valid object. Exiting...")
-    }
-    rasterm<-x[[1]]
-    if( is(rasterm,"RasterLayer") ) {
-      rasterm <- matrix(getValues(rasterm), ncol = ncol(rasterm), nrow = nrow(rasterm), byrow=TRUE)
-    }
-  }
+Shannon <- function(x, window = 3, rasterOut = TRUE, np = 1, na.tolerance=1, cluster.type = "SOCK", debugging = FALSE) {
 
-  #Print user messages
-  message("\nObject x check OK: \nShannon output matrix will be returned.")
-    # Derive operational moving window
-  if( window%%2==1 ){
-    w <- (window-1)/2
-  } else {
-    stop("The size of the moving window must be an odd number. Exiting...")
-  }  
-  if (np == 1){
-    outS <- ShannonS(rasterm, w, na.tolerance, debugging)
-    message("\nCalculation complete.\n")
-    if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
-      outR <- raster(outS,template=x)
-      return(outR)
-    }else{
-      return(outS)
-    }
-  }
-  else if (np>1){
+  alpha=1
+  validateInputs(x, window, alpha, na.tolerance)
+  rasterm <- prepareRaster(x)
+  w <- calculateWindow(window)
+  out <- if (np == 1) calculateShannonSequential(rasterm[[1]], w, alpha, na.tolerance, debugging)
+  else calculateShannonParallel(rasterm[[1]], w, alpha, na.tolerance, debugging, cluster.type=cluster.type, np=np)
+  formatOutput(out, rasterOut, x, alpha, window)
+}
 
-    # If more than 1 process
-    message("\n##################### Starting parallel calculation #######################")
-    if(debugging){cat("#check: Shannon parallel function.")}
-    if( cluster.type=="SOCK" || cluster.type=="FORK" ) {
-      cls <- makeCluster(np,type=cluster.type, outfile="",useXDR=FALSE,methods=FALSE,output="")
-    } 
-    else if( cluster.type=="MPI" ) {
-      cls <- makeCluster(np,outfile="",useXDR=FALSE,methods=FALSE,output="")
-    } 
-    else {
-      message("Wrong definition for cluster.type. Exiting...")
-    }
-    registerDoParallel(cls)
-    # Close clusters on exit
-    on.exit(stopCluster(cls))
-    # Garbage collection
-    gc()
-    outP <- do.call(cbind,ShannonP(rasterm, w, na.tolerance, debugging))
-    message(("\nCalculation complete.\n"))
-    if(rasterOut==TRUE & class(x)[[1]]=="RasterLayer") {
-      outR <- raster(outP,template=x)
-      return(outR)
-    }else{
-      return(outP)
-    }
-  }
+#' Calculate Sequentially
+#'
+#' @description Internal function to calculate indices sequentially.
+#'
+#' @param rasterm Prepared raster object for computation.
+#' @param w The operative moving window size.
+#' @param alpha The alpha parameter (used in some indices).
+#' @param na.tolerance Proportion of acceptable NA values in the window.
+#' @param debugging Logical flag for debugging mode.
+#'
+#' @return Returns a list or matrix of calculated index values.
+#' @noRd
+
+calculateShannonSequential <- function(rasterm, w, alpha, na.tolerance, debugging) {
+  if(debugging) {cat("#check: Before sequential function.")}
+  lapply(w, function(win) {
+    ShannonS(rasterm, win, na.tolerance, debugging)
+    })
+}
+
+#' Calculate in Parallel
+#'
+#' @description Internal function to calculate indices in parallel.
+#'
+#' @param rasterm Prepared raster object for computation.
+#' @param w The operative moving window size.
+#' @param alpha The alpha parameter (used in some indices).
+#' @param na.tolerance Proportion of acceptable NA values in the window.
+#' @param debugging Logical flag for debugging mode.
+#' @param cluster.type Cluster type for parallel computation.
+#' @param np Number of processes for parallel computation.
+#'
+#' @return Returns a list or matrix of calculated index values.
+#' @noRd
+calculateShannonParallel <- function(rasterm, w, alpha, na.tolerance, debugging, cluster.type, np) {
+  if(debugging) {cat("#check: Before parallel function.")}
+  cls <- openCluster(cluster.type, np, debugging); on.exit(stopCluster(cls)); gc()
+  lapply(w, function(win) {
+    ShannonP(rasterm, win, na.tolerance, debugging, np)
+    })
 }

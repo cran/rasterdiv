@@ -1,18 +1,49 @@
+# rasterdiv 0.3.4
+## Major changes
+* Adds back CRE function (leaving old function syntax)
+
+## Minor changes
+* Organises "accessory functions" in a separate file
+* Documents almost all "accessory functions"
+* Tries to improve progress bar
+* Simplify heliPrep()
+* Matches package with book chapter
+
+# rasterdiv 0.3.3
+## Major changes
+* Adds heliPrep and heliPlot for helical graphs
+* Temporarily removes CRE function
+* Adds a vignettes for accRao (4)
+* Adds a vignettes for helical plots (5)
+
+## Minor changes
+* Small changes in all vignettes
+* Updated documentation to Roxygen style
+* Uses terra in the place of raster
+* Changes data type of copNDVI (SpatRaster now)
+* Changes data type of world (SpatVector now)
+* Improves documentation
+
+# rasterdiv 0.3.2
+## Minor changes
+* Fixes minor "bug" for area based Rao that did not allow for polygons containing raster matrices with just one value.
+* Adds an additional examples for Area based Rao.
+
 # rasterdiv 0.3.1
 ## Minor changes
-* Fixing repetition in paRao() manual
+* Fixes repetition in paRao() manual
 
 # rasterdiv 0.3.0
 ## Major changes
-* Adding multidimension area-based Rao's index in *paRao()*.
+* Adds multidimension area-based Rao's index in *paRao()*.
 
 ## Minor changes
-* Reorganisation of vignettes.
-* New GitHub site with *pkgdown()*.
+* Reorganises vignettes.
+* Adds new GitHub site with *pkgdown()*.
 
 # rasterdiv 0.2.5.2
 ## Minor changes
-* Adding testthat tests for area-based Rao.
+* Adds testthat tests for area-based Rao.
 
 # rasterdiv 0.2.5.1
 ## Minor changes
