@@ -21,7 +21,12 @@ paRao(
   np = 1,
   cluster.type = "SOCK",
   progBar = TRUE,
-  debugging = FALSE
+  debugging = FALSE,
+  time_vector = NA,
+  stepness = -0.5,
+  midpoint = 35,
+  cycle_length = "year",
+  time_scale = "day"
 )
 }
 \arguments{
@@ -31,7 +36,7 @@ paRao(
 
 \item{field}{Column name of the vector area layer to use to calculate the index.}
 
-\item{dist_m}{Define the type of distance to be calculated between numerical categories. `dist_m` can be a character string which defines the name of the distance to derive such as "euclidean". The distance names allowed are the same as for \code{proxy::dist}. Alternatively, `dist_m` can be a function which calculates a user-defined distance, (i.e., \code{function(x,y) {return(cos(y-x)-sin(y-x))}}) or a matrix of distances. If `method="multidimension"` then only "euclidean", "manhattan", "canberra", "minkowski" and "mahalanobis" can be used. Default value is "euclidean". If `dist_m` is a matrix, then the function will assume that the matrix contains the distances.}
+\item{dist_m}{Define the type of distance to be calculated between numerical categories. `dist_m` can be a character string which defines the name of the distance to derive such as "euclidean". The distance names allowed are the same as for \code{proxy::dist}. Alternatively, `dist_m` can be a function which calculates a user-defined distance, (i.e., \code{function(x,y) {return(cos(y-x)-sin(y-x))}}) or a matrix of distances. If `method="multidimension"` then only "euclidean", "manhattan", "canberra", "minkowski" and "mahalanobis" can be used. Default value is "euclidean". If `dist_m` is a matrix, then the function will assume that the matrix contains the distances. Moreover \emph{"twdtw"} (time weighted dynamic time warping) can be used as a way to calculate distances for time series in the `paRao` multidimensional mode.}
 
 \item{window}{The side of the square moving window, it must be a vector of odd numeric values greater than 1 to ensure that the target pixel is in the centre of the moving window. Default value is 3. `window` can be a vector with length greater than 1, in this case, Rao's index will be calculated over `x` for each value in the vector.}
 
@@ -58,6 +63,16 @@ paRao(
 \item{progBar}{logical. If TRUE a progress bar is shown.}
 
 \item{debugging}{A boolean variable set to FALSE by default. If TRUE, additional messages will be printed. For debugging only.}
+
+\item{time_vector}{time;}
+
+\item{stepness}{numeric; steepness of the logistic function.}
+
+\item{midpoint}{numeric; midpoint of the logistic function}
+
+\item{cycle_length}{string; The length of the cycle. Can be a numeric value or a string specifying the units ('year', 'month', 'day', 'hour', 'minute', 'second'). When numeric, the cycle length is in the same units as time_scale. When a string, it specifies the time unit of the cycle.}
+
+\item{time_scale}{string; Specifies the time scale for the conversion. Must be one of 'year', 'month', 'day', 'hour', 'minute', 'second'. When cycle_length is a string, time_scale changes the unit in which the result is expressed. When cycle_length is numeric, time_scale is used to compute the elapsed time in seconds.}
 }
 \value{
 A list of matrices of dimension `dim(x)` with length equal to the length of `alpha`. If `rasterOut=TRUE` and `x` is a SpatRaster, then the output is a list of SpatRaster objects.

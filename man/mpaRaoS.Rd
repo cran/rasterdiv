@@ -13,10 +13,16 @@ mpaRaoS(
   rescale,
   lambda,
   diag,
+  time_vector,
+  stepness,
+  midpoint,
+  cycle_length,
+  time_scale,
   debugging,
   isfloat,
   mfactor,
-  np
+  np,
+  progBar
 )
 }
 \arguments{
@@ -38,6 +44,16 @@ NA; otherwise, the computation uses the non-NA values.}
 
 \item{diag}{Logical; if TRUE, includes the diagonal of the distance matrix in computations.}
 
+\item{time_vector}{time;}
+
+\item{stepness}{numeric; steepness of the logistic function.}
+
+\item{midpoint}{numeric; midpoint of the logistic function}
+
+\item{cycle_length}{string; The length of the cycle. Can be a numeric value or a string specifying the units ('year', 'month', 'day', 'hour', 'minute', 'second'). When numeric, the cycle length is in the same units as time_scale. When a string, it specifies the time unit of the cycle.}
+
+\item{time_scale}{string; Specifies the time scale for the conversion. Must be one of 'year', 'month', 'day', 'hour', 'minute', 'second'. When cycle_length is a string, time_scale changes the unit in which the result is expressed. When cycle_length is numeric, time_scale is used to compute the elapsed time in seconds.}
+
 \item{debugging}{Logical; if TRUE, additional diagnostic messages are output, useful for debugging. Default 
 is FALSE.}
 
@@ -46,6 +62,8 @@ is FALSE.}
 \item{mfactor}{Numeric; multiplication factor applied if input data are float numbers.}
 
 \item{np}{Number of processes for parallel computation.}
+
+\item{progBar}{logical. If TRUE a progress bar is shown.}
 }
 \value{
 A list of matrices, each representing a layer of the input RasterStack, containing calculated 

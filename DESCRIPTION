@@ -1,8 +1,8 @@
 Package: rasterdiv
 Type: Package
 Title: Diversity Indices for Numerical Matrices
-Version: 0.3.4
-Date: 2024-03-01
+Version: 0.3.5
+Date: 2024-09-24
 Authors@R: c(
     person("Matteo", "Marcantonio", role = c("aut", "cre"), email = "marcantoniomatteo@gmail.com"),
     person("Martina", "Iannacito", role = c("aut", "ctb"), email = "martina.iannacito@inria.fr"),
@@ -21,17 +21,18 @@ Description: Provides methods to calculate diversity indices on numerical matric
     and Rocchini et al. (2021) <doi:10.1101/2021.01.23.427872>.
 Depends: R (>= 4.0.0)
 Imports: doParallel, foreach, ggforce, ggplot2, methods, proxy,
-        progress, terra, viridis
+        progress, terra, twdtw, viridis
 Suggests: knitr, rmarkdown, rasterVis, RColorBrewer, gridExtra, gstat,
         latticeExtra, COVID19
 License: GPL (>= 2)
 Encoding: UTF-8
 URL: https://mattmar.github.io/rasterdiv/
 BugReports: https://github.com/mattmar/rasterdiv/issues
-RoxygenNote: 7.3.1
+VignetteBuilder: knitr
+RoxygenNote: 7.3.2
 Language: en-GB
 NeedsCompilation: no
-Packaged: 2024-03-04 14:12:34 UTC; matteo
+Packaged: 2024-10-14 12:41:17 UTC; matteo
 Author: Matteo Marcantonio [aut, cre],
   Martina Iannacito [aut, ctb],
   Elisa Marchetto [ctb],
@@ -44,4 +45,4 @@ Author: Matteo Marcantonio [aut, cre],
   Carlo Ricotta [aut],
   Duccio Rocchini [aut, ctb]
 Repository: CRAN
-Date/Publication: 2024-03-04 16:20:02 UTC
+Date/Publication: 2024-10-14 13:20:02 UTC

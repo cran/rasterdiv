@@ -1,3 +1,13 @@
+# rasterdiv 0.3.5
+## Major changes
+* Adds `twdtw` as a distance methods for `paRao()`
+* Adds back `Rao()` as an alias for `paRao(alpha=2)`
+
+## Minor changes
+* Changes how `N` is intended in `mpaRaoAreaS`
+* Other improvements in `paRaoS` and `paRaoP`
+* Fixes bug in progBar for `paRao()`
+
 # rasterdiv 0.3.4
 ## Major changes
 * Adds back CRE function (leaving old function syntax)

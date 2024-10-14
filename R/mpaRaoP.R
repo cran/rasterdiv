@@ -15,11 +15,17 @@
 #' @param rescale Scale and centre values in each of the element of x.
 #' @param lambda Lambda value for Minkowski distance.
 #' @param diag Boolean. Diagonal of the distance matrix.
+#' @param time_vector time; 
+#' @param stepness numeric; steepness of the logistic function.
+#' @param midpoint numeric; midpoint of the logistic function
+#' @param cycle_length string; The length of the cycle. Can be a numeric value or a string specifying the units ('year', 'month', 'day', 'hour', 'minute', 'second'). When numeric, the cycle length is in the same units as time_scale. When a string, it specifies the time unit of the cycle.
+#' @param time_scale string; Specifies the time scale for the conversion. Must be one of 'year', 'month', 'day', 'hour', 'minute', 'second'. When cycle_length is a string, time_scale changes the unit in which the result is expressed. When cycle_length is numeric, time_scale is used to compute the elapsed time in seconds.
 #' @param debugging a boolean variable set to FALSE by default. If TRUE, additional
 #'   messages will be printed. For de-bugging only.
 #' @param isfloat Are the input data floats?
 #' @param mfactor Multiplication factor in case of input data as float numbers.
 #' @param np the number of processes (cores) which will be spawned.
+#' @param progBar logical. If TRUE a progress bar is shown.
 #'
 #' @return A list of matrices of dimension \code{dim(x)} with length equal to the
 #'   length of \code{alpha}.
@@ -31,19 +37,22 @@
 #'
 #' @keywords internal
 
-mpaRaoP <- function(x,alpha,window,dist_m,na.tolerance,rescale,lambda,diag,debugging,isfloat,mfactor,np) {
+mpaRaoP <- function(x,alpha,window,dist_m,na.tolerance,rescale,lambda, diag, time_vector, stepness, midpoint, cycle_length, time_scale, debugging, isfloat, mfactor, np, progBar) {
    # `win` is the operative moving window
    win = window 
    NAwin <- 2*window+1
    message("\n\nProcessing alpha: ",alpha, " Moving Window: ", NAwin)
+    
     # Set a progress bar
-    pb <- progress::progress_bar$new(
+    if( progBar ) {
+        pb <- progress::progress_bar$new(
         format = "[:bar] :percent in :elapsed\n",
-    # Total number of ticks is the number of column +NA columns divided the number of processor.
-    total = (dim(x[[1]])[2]/np)+5, 
-    clear = FALSE, 
-    width = 60, 
-    force = FALSE)
+        # Total number of ticks is the number of column +NA columns divided the number of processor.
+        total = (dim(x[[1]])[2]/np)+5, 
+        clear = FALSE, 
+        width = 60, 
+        force = FALSE)
+    }
 
     mfactor <- ifelse(isfloat,mfactor,1) 
     diagonal <- ifelse(diag==TRUE,0,NA)
@@ -69,12 +78,13 @@ mpaRaoP <- function(x,alpha,window,dist_m,na.tolerance,rescale,lambda,diag,debug
             }
         }
 # Validate and set the distance function
-validDistanceMetrics <- c("euclidean", "manhattan", "canberra", "minkowski", "mahalanobis")
+validDistanceMetrics <- c("euclidean", "manhattan", "canberra", "minkowski", "mahalanobis", "twdtw")
 if (dist_m %in% validDistanceMetrics) {
     switch(dist_m,
         euclidean = distancef <- get(".meuclidean"),
         manhattan = distancef <- get(".mmanhattan"),
         canberra = distancef <- get(".mcanberra"),
+        twdtw = distancef <- get(".mtwdtw"),
         minkowski = {
             if (lambda == 0) stop("Minkowski distance with lambda = 0 is undefined. Choose another value.")
             distancef <- get(".mminkowski")
@@ -87,7 +97,7 @@ if (dist_m %in% validDistanceMetrics) {
     } else if (is.matrix(dist_m)) {
         distancef <- dist_m
         } else {
-            stop("Invalid distance metric. Choose among 'euclidean', 'manhattan', 'canberra', 'minkowski', 'mahalanobis', or provide a matrix.")
+            stop("Invalid distance metric. Choose among 'euclidean', 'manhattan', 'canberra', 'minkowski', 'mahalanobis', 'twdtw' or provide a matrix.")
         }
         # Debugging check
         if (debugging) {
@@ -110,13 +120,13 @@ if (dist_m %in% validDistanceMetrics) {
     # Parallelised parametric multidimensional Rao
     out <- foreach::foreach(cl=(1+win):(dim(rasterm)[2]+win),.verbose = F, .export=c("alpha")) %dopar% {
         # Update progress bar
-        pb$tick()
+        if(progBar) pb$tick()
         # Row loop
         mpaRaoOP <- sapply((1+win):(dim(rasterm)[1]+win), function(rw) {
             if(debugging) {
                 message("#check: Inside sapply.")
             }
-            if( length(!which(!trastersm[[1]][c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < (NAwin^2-((NAwin^2)*na.tolerance)) ) {
+            if( length(!which(!trastersm[[1]][c(rw-win):c(rw+win),c(cl-win):c(cl+win)]%in%NA)) < floor(NAwin^2-((NAwin^2)*na.tolerance)) ) {
                 vv <- NA
                 return(vv)
                 } else {
@@ -124,9 +134,9 @@ if (dist_m %in% validDistanceMetrics) {
                         x[(rw-win):(rw+win),(cl-win):(cl+win)]
                         })
                 # Vectorise the matrices in the list and calculate between matrices pairwase distances
-                lv <- lapply(tw, function(x) {as.vector(t(x))})
+                lv <- lapply(tw, function(x) as.vector(t(x)))
                 vcomb <- utils::combn(length(lv[[1]]),2)
-                # Exclude NAwins with only 1 category in all lists
+                # Exclude windows with only 1 category in all lists
                 if( sum(sapply(lv, function(x) length(unique(x))),na.rm=TRUE)<(length(lv)+1) ) {
                     vv <- 0
                     } else {
@@ -134,14 +144,20 @@ if (dist_m %in% validDistanceMetrics) {
                             lpair <- lapply(lv, function(chi) {
                                 c(chi[vcomb[1,p]],chi[vcomb[2,p]])
                                 })
-                            return(distancef(lpair)/mfactor)
+                            return(
+                                if (dist_m == "twdtw") {
+                                    llist <- list(sapply(lpair, function(x) x[1]), sapply(lpair, function(x) x[2]))
+                                    distancef(llist, time_vector = time_vector, stepness = stepness, midpoint = midpoint, cycle_length = cycle_length, time_scale = time_scale) / mfactor
+                                    } else {
+                                        distancef(lpair) / mfactor
+                                        })
                             })
-                    # Evaluate the parsed alpha method
-                    vv <- eval(parse(text=alphameth))
-                }
-                return(vv)
-            }
-            })
+                            # Evaluate the parsed alpha method
+                            vv <- eval(parse(text=alphameth))
+                        }
+                        return(vv)
+                    }
+                    })
         return(mpaRaoOP)
     }
     return(do.call(cbind,out))

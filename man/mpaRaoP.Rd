@@ -13,10 +13,16 @@ mpaRaoP(
   rescale,
   lambda,
   diag,
+  time_vector,
+  stepness,
+  midpoint,
+  cycle_length,
+  time_scale,
   debugging,
   isfloat,
   mfactor,
-  np
+  np,
+  progBar
 )
 }
 \arguments{
@@ -41,6 +47,16 @@ Default values is 0.0 (i.e., no tolerance for NA's).}
 
 \item{diag}{Boolean. Diagonal of the distance matrix.}
 
+\item{time_vector}{time;}
+
+\item{stepness}{numeric; steepness of the logistic function.}
+
+\item{midpoint}{numeric; midpoint of the logistic function}
+
+\item{cycle_length}{string; The length of the cycle. Can be a numeric value or a string specifying the units ('year', 'month', 'day', 'hour', 'minute', 'second'). When numeric, the cycle length is in the same units as time_scale. When a string, it specifies the time unit of the cycle.}
+
+\item{time_scale}{string; Specifies the time scale for the conversion. Must be one of 'year', 'month', 'day', 'hour', 'minute', 'second'. When cycle_length is a string, time_scale changes the unit in which the result is expressed. When cycle_length is numeric, time_scale is used to compute the elapsed time in seconds.}
+
 \item{debugging}{a boolean variable set to FALSE by default. If TRUE, additional
 messages will be printed. For de-bugging only.}
 
@@ -49,6 +65,8 @@ messages will be printed. For de-bugging only.}
 \item{mfactor}{Multiplication factor in case of input data as float numbers.}
 
 \item{np}{the number of processes (cores) which will be spawned.}
+
+\item{progBar}{logical. If TRUE a progress bar is shown.}
 }
 \value{
 A list of matrices of dimension \code{dim(x)} with length equal to the
