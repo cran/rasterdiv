@@ -29,12 +29,12 @@ values(r) <- xyz$sim1
 values(r1) <- xyz$sim2
 
 ## ----results='hide', message=FALSE, warning=FALSE, eval=FALSE-----------------
-#  mRao <- paRao(x=list(r, r1), window=c(3, 5), alpha=c(1, Inf), na.tolerance=1, method="multidimension", simplify=3)
+# mRao <- paRao(x=list(r, r1), window=c(3, 5), alpha=c(1, Inf), na.tolerance=1, method="multidimension", simplify=3)
 
 ## ----results='hide', message=FALSE, warning=FALSE, eval=FALSE-----------------
-#  # Create a list of all the rasters to plot
-#  rasters_to_plot <- c(r, r1, mRao[[1]]$alpha.1, mRao[[2]]$alpha.Inf)
-#  names(rasters_to_plot) <- c("Raster1", "Raster2", "Rao_Index_Window_3", "Rao_Index_Window_5")
+# # Create a list of all the rasters to plot
+# rasters_to_plot <- c(r, r1, mRao[[1]]$alpha.1, mRao[[2]]$alpha.Inf)
+# names(rasters_to_plot) <- c("Raster1", "Raster2", "Rao_Index_Window_3", "Rao_Index_Window_5")
 
 ## ----results='hide', message=FALSE, warning=FALSE, include = FALSE------------
 rasters_to_plot <- readRDS("rasters_to_plot.RDS")
@@ -114,47 +114,47 @@ for (cl in sample(ncol(raster_ts),10)) {
 }
 
 ## ----results='hide', message=FALSE, warning=FALSE, eval=FALSE-----------------
-#  # Set dates for the time series
-#  dates <- seq(as.Date("2023-01-01"), as.Date("2023-12-31"), length.out = nlyr(raster_ts))
+# # Set dates for the time series
+# dates <- seq(as.Date("2023-01-01"), as.Date("2023-12-31"), length.out = nlyr(raster_ts))
 
 ## ----results='hide', message=FALSE, warning=FALSE, eval=FALSE-----------------
-#  # Calculate Phenological Rao's Index using TWDTW
-#  RaoPhen <- paRao(x = raster_ts,
-#                   window = 5,
-#                   alpha = 2,
-#                   na.tolerance = 0,
-#                   time_vector = dates,
-#                   method = "multidimension",
-#                   dist_m = "twdtw",
-#                   np = 7, progBar = FALSE)
-#  
-#  # Calculate Rao's Index using Euclidean distance
-#  RaoEuc <- paRao(x = raster_ts,
+# # Calculate Phenological Rao's Index using TWDTW
+# RaoPhen <- paRao(x = raster_ts,
 #                  window = 5,
 #                  alpha = 2,
 #                  na.tolerance = 0,
+#                  time_vector = dates,
 #                  method = "multidimension",
-#                  dist_m = "euclidean",
+#                  dist_m = "twdtw",
 #                  np = 7, progBar = FALSE)
+# 
+# # Calculate Rao's Index using Euclidean distance
+# RaoEuc <- paRao(x = raster_ts,
+#                 window = 5,
+#                 alpha = 2,
+#                 na.tolerance = 0,
+#                 method = "multidimension",
+#                 dist_m = "euclidean",
+#                 np = 7, progBar = FALSE)
 
 ## ----results='hide', message=FALSE, warning=FALSE, eval=FALSE-----------------
-#  # Visualization
-#  raster_ts_plot <- levelplot(mean(raster_ts), margin = FALSE,
-#                              col.regions = viridis(100),
-#                              main = list(label = "Average index",
-#                              cex = 1.5))
-#  
-#  RaoP_plot <- levelplot(RaoPhen[[1]][[1]], margin = FALSE,
-#                         col.regions = viridis(100),
-#                         main = list(label = "Phenological Rao",
-#                         cex = 1.5))
-#  
-#  Rao_plot <- levelplot(RaoEuc[[1]][[1]], margin = FALSE,
+# # Visualization
+# raster_ts_plot <- levelplot(mean(raster_ts), margin = FALSE,
+#                             col.regions = viridis(100),
+#                             main = list(label = "Average index",
+#                             cex = 1.5))
+# 
+# RaoP_plot <- levelplot(RaoPhen[[1]][[1]], margin = FALSE,
 #                        col.regions = viridis(100),
-#                        main = list(label = "Rao",
+#                        main = list(label = "Phenological Rao",
 #                        cex = 1.5))
-#  
-#  do.call(gridExtra::grid.arrange, c(list(raster_ts_plot, Rao_plot, RaoP_plot), ncol = 3))
+# 
+# Rao_plot <- levelplot(RaoEuc[[1]][[1]], margin = FALSE,
+#                       col.regions = viridis(100),
+#                       main = list(label = "Rao",
+#                       cex = 1.5))
+# 
+# do.call(gridExtra::grid.arrange, c(list(raster_ts_plot, Rao_plot, RaoP_plot), ncol = 3))
 
 ## ----include-figure, echo=FALSE, fig.align='center', fig.cap='', out.width='100%'----
 knitr::include_graphics("PhenoRao.png")

@@ -1,6 +1,10 @@
 # rasterdiv 0.3.6
 ## Minor changes
-* Refixes \alias to `load_copNDVI()` (see warining raised by Brian Ripley)
+* Fixes `ggplot2::geom_text` `expression` to `parse==TRUE`.
+ 
+# rasterdiv 0.3.6
+## Minor changes
+* Re-fixes \alias to `load_copNDVI()` (see warning raised by Brian Ripley)
 * Sets Classical Rao's = 0 for window with only 1 non-NA value (see bug raised by Jakub Nowosad)
 
 # rasterdiv 0.3.5p
