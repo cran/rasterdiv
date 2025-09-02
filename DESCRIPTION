@@ -1,8 +1,8 @@
 Package: rasterdiv
 Type: Package
 Title: Diversity Indices for Numerical Matrices
-Version: 0.3.7
-Date: 2025-08-28
+Version: 0.3.8
+Date: 2025-09-01
 Authors@R: c(
      person("Matteo", "Marcantonio", role = c("aut", "cre"),
             email = "marcantoniomatteo@gmail.com"),
@@ -44,7 +44,7 @@ VignetteBuilder: knitr
 RoxygenNote: 7.3.2
 Language: en-GB
 NeedsCompilation: no
-Packaged: 2025-09-01 12:18:06 UTC; matteo
+Packaged: 2025-09-02 13:44:02 UTC; matteo
 Author: Matteo Marcantonio [aut, cre],
   Martina Iannacito [ctb] (Former author),
   Elisa Marchetto [ctb] (Former author),
@@ -57,4 +57,4 @@ Author: Matteo Marcantonio [aut, cre],
   Carlo Ricotta [ctb] (Former author),
   Duccio Rocchini [aut]
 Repository: CRAN
-Date/Publication: 2025-09-01 13:00:02 UTC
+Date/Publication: 2025-09-02 14:30:10 UTC

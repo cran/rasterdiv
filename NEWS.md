@@ -1,4 +1,8 @@
-# rasterdiv 0.3.6
+# rasterdiv 0.3.7p
+## Minor changes
+* Patches another forgotten `ggplot2::geom_text` `expression` to `parse==TRUE`.
+
+# rasterdiv 0.3.7
 ## Minor changes
 * Fixes `ggplot2::geom_text` `expression` to `parse==TRUE`.
  
